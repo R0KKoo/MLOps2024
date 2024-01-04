@@ -51,24 +51,27 @@ def train(lr):
 @click.argument("model_checkpoint")
 def evaluate(model_checkpoint):
     """Evaluate a trained model."""
-    print("Evaluating like my life dependends on it")
+    print("Evaluating like my life depends on it")
     print(model_checkpoint)
 
     # TODO: Implement evaluation logic here
     model = MyAwesomeModel()
     checkpoint = torch.load(model_checkpoint)
     model.load_state_dict(checkpoint)
-    model.eval()
     
     _, test_loader = mnist()
     
-    with torch.no_grad():
-        for images, labels in test_loader:
-            ps = torch.exp(model(images))
-            top_p, top_class = ps.topk(1, dim=1)
-            equals = top_class == labels.view(top_class.shape)
-            accuracy = torch.mean(equals.type(torch.FloatTensor))
-    print(f'Accuracy: {accuracy.item()*100}%')
+    epochs = 1
+
+    for e in range(epochs):
+        model.eval()
+        with torch.no_grad():
+            for images, labels in test_loader:
+                ps = torch.exp(model(images))
+                top_p, top_class = ps.topk(1, dim=1)
+                equals = top_class == labels.view(top_class.shape)
+                accuracy = torch.mean(equals.type(torch.FloatTensor))
+            print(f'Accuracy: {accuracy.item()*100}%')
 
 
 cli.add_command(train)

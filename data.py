@@ -1,5 +1,6 @@
 import torch
 from torch.utils.data import DataLoader, TensorDataset
+from torchvision import transforms
 
 def mnist(data_dir='/Applications/dtu_mlops/data/corruptmnist'):
     """Return train and test dataloaders for MNIST."""
@@ -13,26 +14,24 @@ def mnist(data_dir='/Applications/dtu_mlops/data/corruptmnist'):
     train_images = torch.cat(train_images, dim=0)
     train_targets = torch.cat(train_targets, dim=0)
 
+    # Define data augmentation transforms
+    transform = transforms.Compose([
+        transforms.RandomRotation(10),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5,), (0.5,))
+    ])
+
+    # Apply data augmentation to the training set
+    trainset = TensorDataset(train_images, train_targets)
+    #trainset = transforms.RandomApply([transform], p=0.5)(trainset)
+    testset = TensorDataset(test_images, test_targets)
+
     # Combine images and targets into a single dataset
-    train_dataset = TensorDataset(train_images, train_targets)
-    test_dataset = TensorDataset(test_images, test_targets)
-
-    # Making the train- and testloaders
-    trainloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-    testloader = DataLoader(test_dataset, batch_size=32, shuffle=False)
-
-    # Checking corruption on the data
-    # Visualize a sample image from the first batch
-    '''for i in range(0,15):
-            sample_image = train_images[0][i, :].numpy().reshape(28, 28)  # Assuming MNIST image size
-            plt.subplot(1, 15, i + 1)
-            plt.imshow(sample_image, cmap='gray')
-            plt.axis('off')
-
-    plt.show()'''
+    trainloader = DataLoader(trainset, batch_size=32, shuffle=True)
+    testloader = DataLoader(testset, batch_size=256, shuffle=False)
 
     return trainloader, testloader
 
-mnist()
-'''a, b = torch.load("/Applications/dtu_mlops/data/corruptmnist/train_images_0.pt"), torch.load("/Applications/dtu_mlops/data/corruptmnist/train_target_0.pt")
-print(a.size(),'\n',b.size())'''
+a, b = torch.load("/Applications/dtu_mlops/data/corruptmnist/test_images.pt"), torch.load("/Applications/dtu_mlops/data/corruptmnist/test_target.pt")
+print(a.size(),'\n',b.size()) 
