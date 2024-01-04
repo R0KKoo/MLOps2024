@@ -1,4 +1,10 @@
+import numpy as np
+
 def calc(a):
 	b = 0
-	b += [a[i] for i in range(a)]
+	print(a)
+	for i in range(len(a)):
+		b = a[i]+b
 	return b
+
+print(calc(np.random.randint(60,size=8)))
