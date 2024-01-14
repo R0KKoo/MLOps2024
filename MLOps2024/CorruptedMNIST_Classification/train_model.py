@@ -4,7 +4,7 @@ from torch import nn, optim
 from torch.utils.data import DataLoader, TensorDataset
 import matplotlib.pyplot as plt
 
-sys.path.append('/Users/macbookpro/MLOps2024/MLOps2024/models/model1')
+sys.path.insert(0, '/MLOps2024/models/model1')
 
 from model import MyAwesomeModel
 
@@ -17,8 +17,8 @@ def train(lr):
 
     # TODO: Implement training loop here
     model = MyAwesomeModel()
-    images = torch.load('/Users/macbookpro/MLOps2024/MLOps2024/data/processed/processed_images.pt')
-    targets = torch.load('/Users/macbookpro/MLOps2024/MLOps2024/data/processed/processed_targets.pt')
+    images = torch.load('/MLOps2024/data/processed/processed_images.pt')
+    targets = torch.load('/MLOps2024/data/processed/processed_targets.pt')
     trainset = TensorDataset(images, targets)
     train_loader = DataLoader(trainset, batch_size=64, shuffle=True)
     criterion = nn.NLLLoss()
@@ -49,15 +49,16 @@ def train(lr):
             losses.append(average_loss)
             print(f'Training loss: {average_loss}')
     
-    torch.save(model.state_dict(), '/Users/macbookpro/MLOps2024/MLOps2024/models/model1/model_checkpoint.pth')
+    torch.save(model.state_dict(), '/MLOps2024/models/model1/model_checkpoint.pth')
 
     plt.plot(range(1, epoch+1), losses, marker='o')
     plt.xlabel('Epoch')
     plt.ylabel('Training Loss')
     plt.title(f'Training Loss Over {e+1} Epochs')
-    plt.savefig('/Users/macbookpro/MLOps2024/MLOps2024/reports/figures')
+    plt.savefig('/MLOps2024/reports/figures')
 
-train(input('Learning rate:\n'))
+train(0.002)
+#train(input('Learning rate:\n'))
 
 if __name__ == "__main__":
     pass
